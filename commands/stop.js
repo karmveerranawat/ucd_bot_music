@@ -5,10 +5,10 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName("stop")
     .setDescription("Stop Music If playing"),
-  async execute(interaction, args) {
+  async execute(message, args) {
     var connection = getVoiceConnection(message.channel.guild.id);
     if (connection == null)
-      return interaction.reply("No connections at the moment to stop !");
+      return message.reply("No connections at the moment to stop !");
     try {
       connection.destroy();
     } catch (e) {
