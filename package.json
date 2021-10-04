@@ -1,0 +1,25 @@
+{
+  "name": "ucd_bot_2",
+  "version": "1.0.0",
+  "description": "Discord Bot at JSvs13",
+  "main": "main.js",
+  "scripts": {
+    "start": "nodemon main.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Karmveer Singh Ranawat",
+  "license": "ISC",
+  "dependencies": {
+    "@discordjs/builders": "^0.6.0",
+    "@discordjs/opus": "^0.5.3",
+    "@discordjs/rest": "^0.1.0-canary.0",
+    "@discordjs/voice": "^0.6.0",
+    "discord-api-types": "^0.23.1",
+    "discord.js": "^13.1.0",
+    "dotenv": "^10.0.0",
+    "ffmpeg-static": "^4.4.0",
+    "libsodium-wrappers": "^0.7.9",
+    "yt-search": "^2.10.1",
+    "ytdl-core": "^4.9.1"
+  }
+}
