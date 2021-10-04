@@ -59,10 +59,16 @@ function addListerners(message) {
   var connection = getVoiceConnection(message.channel.guild.id);
   connection.on(VoiceConnectionStatus.Disconnected, async () => {
     console.log("Disconnected");
+    player.removeAllListeners();
+    player.stop();
+    trigger = 0;
   });
 
   connection.on(VoiceConnectionStatus.Destroyed, async () => {
     console.log("Destroyed");
+    player.removeAllListeners();
+    player.stop();
+    trigger = 0;
   });
 
   player.on(AudioPlayerStatus.Playing, () => {
@@ -90,8 +96,9 @@ function addListerners(message) {
     console.log("Its Buffering");
   });
 
-  player.on("error", (e) => {
-    message.channel.send("lmao bot crashed , error log is " + e);
+  player.on("error", (error) => {
+    console.log(error);
+    message.channel.send("lmao bot crashed , error log is " + error);
   });
 }
 

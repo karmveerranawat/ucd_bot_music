@@ -1,10 +1,18 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
+const { getVoiceConnection } = require("@discordjs/voice");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("ping")
-    .setDescription("Replies with Pong!"),
-  async execute(interaction) {
-    await interaction.reply("Pong!");
+    .setName("stop")
+    .setDescription("Stop Music If playing"),
+  async execute(interaction, args) {
+    var connection = getVoiceConnection(message.channel.guild.id);
+    if (connection == null)
+      return interaction.reply("No connections at the moment to stop !");
+    try {
+      connection.destroy();
+    } catch (e) {
+      console.log("Can not stop music cuz " + e);
+    }
   },
 };
