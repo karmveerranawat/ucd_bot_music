@@ -8,7 +8,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 //prefix
-const prefix = "%";
+const prefix = ",";
 
 // Create a new client instance
 const client = new Client({
