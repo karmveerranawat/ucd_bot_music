@@ -2,6 +2,9 @@
   "name": "ucd_bot_2",
   "version": "1.0.0",
   "description": "Discord Bot at JSvs13",
+  "engines": {
+    "node": "16.10.0"
+  },
   "main": "main.js",
   "scripts": {
     "start": "nodemon main.js",

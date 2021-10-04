@@ -76,15 +76,14 @@ function addListerners(message) {
       player.stop();
       trigger = 0;
       return message.channel.send("Bot Disconnected due to empty queue");
+    } else {
+      console.log("player idle" + queue);
+      //play the next song on queue
+      await audioVerifyPlayer(queue[0]);
+      message.channel.send("Now Playing " + queue[0]);
+      //change song sequence for next time
+      queue.shift();
     }
-    console.log("player idle");
-    //music queue
-    console.log(queue);
-    //play the next song on queue
-    await audioVerifyPlayer(queue[0]);
-    message.channel.send("Now Playing " + queue[0]);
-    //change song sequence for next time
-    queue.shift();
   });
 
   player.on(AudioPlayerStatus.Buffering, async () => {
