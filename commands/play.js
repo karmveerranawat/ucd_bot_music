@@ -1,4 +1,5 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
+const { MessageEmbed } = require("discord.js");
 const {
   joinVoiceChannel,
   VoiceConnectionStatus,
@@ -7,13 +8,18 @@ const {
   AudioPlayerStatus,
   getVoiceConnection,
 } = require("@discordjs/voice");
-const ytdl = require("ytdl-core");
-const ytSearch = require("yt-search");
+const play = require("play-dl");
 let trigger = 0;
 let queue = [];
+
 //player and resource initiation
 const player = createAudioPlayer();
 
+const queueEmbed = new MessageEmbed();
+queueEmbed
+  .setColor("#0099ff")
+  .setTitle("MOOZIC QUEUE")
+  .setURL("https://ucdupes.org/");
 //vc join function
 function vcConnect(message) {
   const connection = joinVoiceChannel({
@@ -25,8 +31,11 @@ function vcConnect(message) {
 }
 
 //player starting
-function playAudio(args) {
-  const resource = createAudioResource(ytdl(args, { filter: "audio" }));
+function playAudio(stream) {
+  let resource = createAudioResource(stream.stream, {
+    inputType: stream.type,
+  });
+  //const resource = createAudioResource(ytdl(args, { filter: "audio" }));
   player.play(resource);
 }
 
@@ -45,13 +54,15 @@ async function audioVerifyPlayer(args) {
   if (validURL(args)) {
     playAudio(args);
   } else {
-    const videoFinder = async (query) => {
-      const videoResult = await ytSearch(query);
-      return videoResult.videos.length > 1 ? videoResult.videos[0] : null;
-    };
+    let yt_info = await play.search(args, { limit: 1 });
+    let stream = await play.stream(yt_info[0].url);
+    playAudio(stream);
+    // const videoFinder = async (query) => {
+    //   const videoResult = await ytSearch(query);
+    //   return videoResult.videos.length > 1 ? videoResult.videos[0] : null;
+    // };
 
-    const video = await videoFinder(args);
-    playAudio(video.url);
+    // const video = await videoFinder(args);
   }
 }
 
@@ -126,9 +137,12 @@ module.exports = {
         var connection = getVoiceConnection(message.channel.guild.id);
         queue.push(args.join(" "));
         console.log(queue);
-        message.channel.send(
-          "song has been added to the queue, current queue is " + queue
-        );
+        console.log(message.author);
+        queueEmbed.addFields({
+          name: `Song : **${args.join(" ")}** `,
+          value: `Added By : ${message.author}`,
+        });
+        message.reply({ embeds: [queueEmbed] });
       }
     }
   },
