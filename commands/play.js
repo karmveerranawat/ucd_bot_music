@@ -15,11 +15,32 @@ let queue = [];
 //player and resource initiation
 const player = createAudioPlayer();
 
-const queueEmbed = new MessageEmbed();
+let queueEmbed = new MessageEmbed();
 queueEmbed
   .setColor("#0099ff")
   .setTitle("MOOZIC QUEUE")
   .setURL("https://ucdupes.org/");
+
+function embedCreator(oldQueue) {
+  //temp embed init
+  const tempEmbed = new MessageEmbed();
+
+  //embed defaults
+  tempEmbed
+    .setColor("#0099ff")
+    .setTitle("MOOZIC QUEUE")
+    .setURL("https://ucdupes.org/");
+
+  //creating embed based on queue
+  oldQueue.forEach((element) => {
+    tempEmbed.addFields({
+      name: `Song **${element.song}**`,
+      value: `Added by: ${element.author}`,
+    });
+  });
+
+  return tempEmbed;
+}
 //vc join function
 function vcConnect(message) {
   const connection = joinVoiceChannel({
@@ -73,6 +94,7 @@ function addListerners(message) {
     player.removeAllListeners();
     player.stop();
     trigger = 0;
+    queue = [];
   });
 
   connection.on(VoiceConnectionStatus.Destroyed, async () => {
@@ -80,6 +102,7 @@ function addListerners(message) {
     player.removeAllListeners();
     player.stop();
     trigger = 0;
+    queue = [];
   });
 
   player.on(AudioPlayerStatus.Playing, () => {
@@ -92,14 +115,18 @@ function addListerners(message) {
       player.removeAllListeners();
       player.stop();
       trigger = 0;
+      queue = [];
       return message.channel.send("Bot Disconnected due to empty queue");
     } else {
-      console.log("player idle" + queue);
       //play the next song on queue
-      await audioVerifyPlayer(queue[0]);
-      message.channel.send("Now Playing " + queue[0]);
+      await audioVerifyPlayer(queue[0].song);
+      console.log(queue);
+      message.channel.send(
+        `Now playing ${queue[0].song} added by ${queue[0].author}`
+      );
       //change song sequence for next time
       queue.shift();
+      queueEmbed = embedCreator(queue);
     }
   });
 
@@ -135,15 +162,14 @@ module.exports = {
         trigger++;
       } else {
         var connection = getVoiceConnection(message.channel.guild.id);
-        queue.push(args.join(" "));
-        console.log(queue);
-        console.log(message.author);
+        queue.push({ song: args.join(" "), author: message.author });
         queueEmbed.addFields({
-          name: `Song : **${args.join(" ")}** `,
+          name: `Newly Added Song : **${args.join(" ")}** `,
           value: `Added By : ${message.author}`,
         });
         message.reply({ embeds: [queueEmbed] });
       }
     }
   },
+  queueEmbed,
 };
